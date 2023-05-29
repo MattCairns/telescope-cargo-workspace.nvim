@@ -15,7 +15,7 @@ M.pick_workspace = function(opts)
       results = workspace,
       entry_maker = function(entry)
         return {
-          value = entry,
+          value = entry[2],
           display = entry[1],
           ordinal = entry[1],
         }
@@ -26,8 +26,7 @@ M.pick_workspace = function(opts)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
-        -- print(vim.inspect(selection))
-        vim.api.nvim_put({ selection[1] }, "", false, true)
+        local save_dir = vim.fn.chdir(selection.value)
       end)
       return true
     end,
@@ -50,7 +49,8 @@ M._parse_cargo_workspaces_from_json = function(json_input)
   local decoded_input = vim.json.decode(json_input)
 
   for _, package in ipairs(decoded_input.packages) do
-      table.insert(cargo_workspaces, {package.name, package.id})
+    local path = M._extract_path_from_id(package.id) 
+    table.insert(cargo_workspaces, {package.name, path})
   end
 
   return cargo_workspaces
@@ -60,21 +60,20 @@ M._get_cargo_workspaces = function()
   local json_input = M._call_cargo_metadata()
   local cargo_workspaces = M._parse_cargo_workspaces_from_json(json_input)
 
-  print(vim.inspect(cargo_workspaces))
   return cargo_workspaces
 end
 
 M._get_project_names = function(metadata_json)
   local projects = {}
   for _,v in ipairs(metadata_json) do
-    print(v[1])
     table.insert(projects, v[1])
   end
-  print(vim.inspect(projects))
-  -- return projects
 end
 
-
-
+M._extract_path_from_id = function(str)
+  local _, _, path = string.find(str, "path%+file://(/.+)")
+  path = string.gsub(path, "%).*$", "") 
+  return path
+end
 
 return M
