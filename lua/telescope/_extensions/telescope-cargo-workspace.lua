@@ -6,7 +6,7 @@
 -- local picker = require("telescope-cargo-workspace")
 return require("telescope").register_extension {
   exports = {
-    cargo_workspace_switch = require("telescope-cargo-workspace").pick_cargo_workspace,
-    cargo_workspace_oneshot = require("telescope-cargo-workspace").pick_cargo_workspace
+    switch = require("telescope-cargo-workspace").pick_cargo_workspace,
+    -- cargo_workspace_oneshot = require("telescope-cargo-workspace").pick_cargo_workspace
   }
 }
