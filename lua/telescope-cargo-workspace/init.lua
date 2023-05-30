@@ -7,10 +7,6 @@ local previewer = require "telescope.previewers"
 
 local M = {}
 
--- TODO(@mattcairns): Check if cargo is installed
--- TODO(@mattcairns): Check if the directory is a Rust project
--- TODO(@mattcairns): Check if the directory is a Cargo workspace
-
 ---
 -- Displays a list of Cargo workspaces found in the current Rust project and sets the active workspace to the user's selection.
 -- @param opts (table) Optional configuration options for the picker.
