@@ -3,8 +3,13 @@ local finders = require "telescope.finders"
 local conf = require("telescope.config").values
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
+local previewer = require "telescope.previewers"
 
 local M = {}
+
+-- TODO(@mattcairns): Check if cargo is installed
+-- TODO(@mattcairns): Check if the directory is a Rust project
+-- TODO(@mattcairns): Check if the directory is a Cargo workspace
 
 ---
 -- Displays a list of Cargo workspaces found in the current Rust project and sets the active workspace to the user's selection.
@@ -14,12 +19,14 @@ M.pick_cargo_workspace = function(opts)
   opts = opts or {}
   pickers.new(opts, {
     prompt_title = "Cargo Workspaces",
+    previewer = conf.file_previewer(opts),
     finder = finders.new_table {
       results = workspace,
       entry_maker = function(entry)
         return {
           value = entry[2],
           display = entry[1],
+          filename = entry[2].."/Cargo.toml",
           ordinal = entry[1],
         }
       end
@@ -34,6 +41,8 @@ M.pick_cargo_workspace = function(opts)
       return true
     end,
   }):find()
+
+  print(vim.inspect(workspace))
 end
 
 ---
