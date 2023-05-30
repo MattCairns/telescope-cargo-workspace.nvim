@@ -49,6 +49,12 @@ end
 -- Calls the `cargo metadata` command to retrieve metadata for the current Rust project.
 -- @return string The metadata in JSON format.
 M._call_cargo_metadata = function()
+  -- perform preliminary checks to ensure that cargo is installed 
+  local is_cargo_installed = os.execute("which cargo >/dev/null 2>&1")
+  if is_cargo_installed ~= 0 then
+    error("Cargo is not installed")
+  end
+
   local cmd = "cargo metadata --no-deps"
   local handle = io.popen(cmd, "r")
   local json = handle:read("*a")
