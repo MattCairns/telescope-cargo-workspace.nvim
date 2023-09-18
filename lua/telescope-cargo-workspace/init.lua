@@ -40,31 +40,43 @@ M.pick_cargo_workspace = function(opts)
 end
 
 ---
--- Displays a list of Cargo workspaces found in the current Rust project and sets the active workspace to the user's selection.
+-- TODO @mattcairns: This function should display files in the cargo workspace sorted by workspace, with workspace names displayed next to the filename.
 -- @param opts (table) Optional configuration options for the picker.
 M.find_files_in_workspace = function(opts)
-  local workspace = M._get_cargo_workspaces()
+  local cargo_workspaces = M._get_cargo_workspaces()
   opts = opts or {}
+  local file_list = {}
+
+  for _, workspace in ipairs(cargo_workspaces) do
+    local workspace_name = workspace[1]
+    local workspace_path = workspace[2]
+    local files_in_workspace = vim.fn.glob(workspace_path .. "/**/*", true, true)
+    
+    for _, file in ipairs(files_in_workspace) do
+      table.insert(file_list, { workspace_name, file })
+    end
+  end
+
   pickers.new(opts, {
-    prompt_title = "Cargo Workspaces",
+    prompt_title = "Cargo Workspaces Files",
     previewer = conf.file_previewer(opts),
     finder = finders.new_table {
-      results = workspace,
-      -- entry_maker = function(entry)
-      --   return {
-      --     value = entry[2],
-      --     display = entry[1],
-      --     filename = entry[2].."/Cargo.toml",
-      --     ordinal = entry[1],
-      --   }
-      -- end
+      results = file_list,
+      entry_maker = function(entry)
+        return {
+          value = entry[2],
+          display = entry[2] .. " (" .. entry[1] .. ")",
+          filename = entry[2],
+          ordinal = entry[2],
+        }
+      end
     },
     sorter = conf.generic_sorter(opts),
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
-        local save_dir = vim.fn.chdir(selection.value)
+        local save_dir = vim.fn.chdir(vim.fn.fnamemodify(selection.value, ":h"))
       end)
       return true
     end,
