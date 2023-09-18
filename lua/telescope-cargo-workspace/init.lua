@@ -37,8 +37,38 @@ M.pick_cargo_workspace = function(opts)
       return true
     end,
   }):find()
+end
 
-  print(vim.inspect(workspace))
+---
+-- Displays a list of Cargo workspaces found in the current Rust project and sets the active workspace to the user's selection.
+-- @param opts (table) Optional configuration options for the picker.
+M.find_files_in_workspace = function(opts)
+  local workspace = M._get_cargo_workspaces()
+  opts = opts or {}
+  pickers.new(opts, {
+    prompt_title = "Cargo Workspaces",
+    previewer = conf.file_previewer(opts),
+    finder = finders.new_table {
+      results = workspace,
+      -- entry_maker = function(entry)
+      --   return {
+      --     value = entry[2],
+      --     display = entry[1],
+      --     filename = entry[2].."/Cargo.toml",
+      --     ordinal = entry[1],
+      --   }
+      -- end
+    },
+    sorter = conf.generic_sorter(opts),
+    attach_mappings = function(prompt_bufnr, map)
+      actions.select_default:replace(function()
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        local save_dir = vim.fn.chdir(selection.value)
+      end)
+      return true
+    end,
+  }):find()
 end
 
 ---

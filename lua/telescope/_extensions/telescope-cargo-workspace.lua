@@ -7,6 +7,6 @@
 return require("telescope").register_extension {
   exports = {
     switch = require("telescope-cargo-workspace").pick_cargo_workspace,
-    -- cargo_workspace_oneshot = require("telescope-cargo-workspace").pick_cargo_workspace
+    pick = require("telescope-cargo-workspace").find_files_in_workspace,
   }
 }
