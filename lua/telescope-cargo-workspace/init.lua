@@ -93,7 +93,7 @@ M._call_cargo_metadata = function()
     error("Cargo is not installed")
   end
 
-  local cmd = "cargo metadata --no-deps"
+  local cmd = "cargo metadata --no-deps 2> /dev/null"
   local handle = io.popen(cmd, "r")
   local json = handle:read("*a")
   handle:close()
