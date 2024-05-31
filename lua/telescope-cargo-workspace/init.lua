@@ -112,6 +112,8 @@ M._parse_cargo_workspaces_from_json = function(json_input)
 
   for _, package in ipairs(decoded_input.packages) do
     local path = M._extract_path_from_id(package.id) 
+    -- Remove the version part from the path if it exists
+    path = path:match("([^#]+)")
     table.insert(cargo_workspaces, {package.name, path})
   end
 
