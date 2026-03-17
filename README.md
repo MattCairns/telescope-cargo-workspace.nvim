@@ -32,11 +32,13 @@ To use this extension, add the following code to your `init.vim` file:
 require("telescope").load_extension("telescope-cargo-workspace")
 ```
 
+The crate path segment uses the `TelescopeCargoWorkspacePath` highlight group (linked to `Comment` by default), so you can override it in your colorscheme if needed.
+
 ## Usage
 
 The following commands are provided:
 
-Show all the crates in the current Cargo workspace and allows you to switch Neovims current working directory to the chosen crate.
+Show all crates available from `cargo metadata` in the current Cargo workspace. The picker displays each crate as `path/crate` (with path and crate name highlighted separately), plus version, sorts by path and then crate name alphabetically, and allows you to switch Neovim's current working directory to the chosen crate.
 ```vimscript
 :Telescope telescope-cargo-workspace switch
 ```
@@ -49,5 +51,3 @@ Show all the crates in the current Cargo workspace and allows you to switch Neov
 ## License
 
 MIT License. See [LICENSE](./LICENSE) file for details.
-
-
