@@ -136,10 +136,16 @@ M.find_files_in_workspace = function(opts)
   for _, workspace in ipairs(cargo_workspaces) do
     local workspace_name = workspace.name
     local workspace_path = workspace.path
+    local workspace_prefix = workspace_path .. "/"
     local files_in_workspace = vim.fn.glob(workspace_path .. "/**/*", true, true)
     
     for _, file in ipairs(files_in_workspace) do
-      table.insert(file_list, { workspace_name, file })
+      local relative_file = file
+      if vim.startswith(file, workspace_prefix) then
+        relative_file = string.sub(file, #workspace_prefix + 1)
+      end
+
+      table.insert(file_list, { workspace_name, file, relative_file })
     end
   end
 
@@ -151,9 +157,9 @@ M.find_files_in_workspace = function(opts)
       entry_maker = function(entry)
         return {
           value = entry[2],
-          display = entry[2] .. " (" .. entry[1] .. ")",
+          display = entry[3] .. " (" .. entry[1] .. ")",
           filename = entry[2],
-          ordinal = entry[2],
+          ordinal = entry[3] .. " " .. entry[1] .. " " .. entry[2],
         }
       end
     },
